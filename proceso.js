@@ -1,80 +1,69 @@
-let cantidadDeZapatillas;
-let precios = [5000, 7000, 9000];
-const descuentoMayorista = 0.2;
-let modelo, cantidad, cuotas;
+// Capturar entrada de cantidad de zapatillas mediante prompt()
+const cantidadDeZapatillas = prompt("Ingrese la cantidad de zapatillas a comprar:");
 
+// Declarar variables y objetos necesarios para simular el proceso seleccionado
+const precios = [5000, 7000, 9000];
+const descuentoMayorista = 0.2;
+
+// Calcular subtotal
 const calcularSubtotal = (cantidad, precio) => {
   const subtotal = cantidad * precio;
   return subtotal;
-}
+};
 
+// Calcular descuento por compra mayorista
 const calcularDescuentoMayorista = (subtotal) => {
   let descuento = 0;
-  if (cantidadDeZapatillas >= 3 && cantidadDeZapatillas <= 5) {
-    descuento = subtotal * 0.1;
-  } else if (cantidadDeZapatillas > 5 && cantidadDeZapatillas <= 10) {
-    descuento = subtotal * 0.15;
-  } else if (cantidadDeZapatillas > 10) {
+  if (subtotal > 10000) {
     descuento = subtotal * descuentoMayorista;
   }
   return descuento;
-}
+};
 
+// Calcular total a pagar
 const calcularTotal = (subtotal, descuento) => {
   const total = subtotal - descuento;
   return total;
-}
+};
 
-const calcularCuotas = (total, cantidadDeCuotas) => {
-  const montoCuota = total / cantidadDeCuotas;
-  return montoCuota;
-}
+// Obtener el modelo seleccionado por el usuario
+const obtenerModelo = () => {
+  const modelo = document.getElementById("model").value;
+  return modelo;
+};
 
-while (!cantidadDeZapatillas) {
-  cantidadDeZapatillas = prompt("Ingrese la cantidad de zapatillas a comprar:");
-  if (!cantidadDeZapatillas) {
-    alert("Debe ingresar la cantidad de zapatillas.");
-  }
-}
+// Obtener la cantidad de zapatillas ingresada por el usuario
+const obtenerCantidad = () => {
+  const cantidad = parseInt(document.getElementById("quantity").value);
+  return cantidad;
+};
 
-while (!modelo) {
-  modelo = prompt("Ingrese el número de modelo (1, 2 o 3):");
-  if (!modelo || isNaN(modelo) || modelo < 1 || modelo > 3) {
-    alert("Debe ingresar un número de modelo válido.");
-    modelo = null;
-  }
-}
+// Obtener el precio del modelo seleccionado
+const obtenerPrecio = (modelo) => {
+  const precio = precios[modelo];
+  return precio;
+};
 
-while (!cantidad) {
-  cantidad = prompt("Ingrese la cantidad de zapatillas del modelo seleccionado:");
-  if (!cantidad || isNaN(cantidad) || cantidad < 1) {
-    alert("Debe ingresar una cantidad válida.");
-    cantidad = null;
-  }
-}
+// Actualizar el resultado en el DOM
+const actualizarResultado = (subtotal, descuento, total) => {
+  const resultado = document.getElementById("result");
+  resultado.innerHTML = `
+    <p>Subtotal: $${subtotal}</p>
+    <p>Descuento: $${descuento}</p>
+    <p>Total: $${total}</p>
+  `;
+};
 
-while (!cuotas) {
-  cuotas = prompt("Ingrese la cantidad de cuotas (1, 3, 6, 9 o 12):");
-  if (!cuotas || isNaN(cuotas) || ![1, 3, 6, 9, 12].includes(parseInt(cuotas))) {
-    alert("Debe ingresar una cantidad de cuotas válida.");
-    cuotas = null;
-  }
-}
+// Función principal que realiza todo el proceso
+const realizarProceso = () => {
+  const modelo = obtenerModelo();
+  const cantidad = obtenerCantidad();
+  const precio = obtenerPrecio(modelo);
+  const subtotal = calcularSubtotal(cantidad, precio);
+  const descuento = calcularDescuentoMayorista(subtotal);
+  const total = calcularTotal(subtotal, descuento);
+  actualizarResultado(subtotal, descuento, total);
+};
 
-const precio = precios[modelo - 1];
-const subtotal = calcularSubtotal(cantidad, precio);
-const descuento = calcularDescuentoMayorista(subtotal);
-const total = calcularTotal(subtotal, descuento);
-const montoCuota = calcularCuotas(total, cuotas);
-
-let mensaje = `Usted ha seleccionado ${cantidadDeZapatillas} zapatilla(s) del modelo ${modelo}, por un total de $${total}.`;
-
-if (descuento > 0) {
-  mensaje += ` Se le ha aplicado un descuento de $${descuento.toFixed(2)}.`;
-}
-
-if (cuotas > 1) {
-  mensaje += ` Puede abonar en ${cuotas} cuotas de $${montoCuota.toFixed(2)} cada una.`;
-}
-
-document.getElementById("result").textContent = mensaje;
+// Asociar la función realizarProceso al evento de clic del botón "Calcular"
+document.getElementById("calculate").addEventListener("click", realizarProceso);
