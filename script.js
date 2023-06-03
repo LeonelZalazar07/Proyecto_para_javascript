@@ -1,4 +1,6 @@
+
 // Precios de los modelos
+
 const PRICES = {
   modelo1: 5000,
   modelo2: 7000,
@@ -34,7 +36,18 @@ const updateResult = () => {
   }
 
   document.getElementById("result").textContent = result;
+
+  // Mostrar la imagen correspondiente al modelo seleccionado
+  const productImages = document.getElementById("product-images").children;
+  for (let i = 0; i < productImages.length; i++) {
+    if (productImages[i].id === model) {
+      productImages[i].style.display = "block";
+    } else {
+      productImages[i].style.display = "none";
+    }
+  }
 };
+
 
 // Evento de clic en el botón "Calcular"
 document.getElementById("calculate").addEventListener("click", updateResult);
@@ -44,6 +57,27 @@ document.getElementById("save").addEventListener("click", () => {
   const model = document.getElementById("model").value;
   const quantity = parseInt(document.getElementById("quantity").value);
   const installments = parseInt(document.getElementById("installments").value);
+
+  // Función para cargar las localidades de Buenos Aires desde la API
+  const loadShippingOptions = async () => {
+  const response = await fetch('https://ws.smn.gob.ar/map_items/weather');
+  const data = await response.json();
+
+  const shippingSelect = document.getElementById('shipping');
+     // Eliminar las opciones existentes
+  shippingSelect.innerHTML = '';
+
+  // Agregar las opciones de localidad desde los datos de la API
+  data.forEach((locality) => {
+    const option = document.createElement('option');
+    option.value = locality.id;
+    option.textContent = locality.name;
+    shippingSelect.appendChild(option);
+  });
+};
+
+  // Llamar a la función para cargar las opciones de envío al cargar la página
+  window.addEventListener('load', loadShippingOptions);
 
   // Crear objeto con los datos de la venta
   const venta = {
